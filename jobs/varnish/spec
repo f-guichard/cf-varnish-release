@@ -1,0 +1,19 @@
+---
+name: varnish
+templates:
+  varnish_ctl: bin/varnish_ctl
+  varnish_default.vcl.erb: etc/varnish_default.vcl
+
+packages:
+  - varnish
+
+properties:
+  #Release init :
+  varnish_default_vcl:
+    description: 'default varnish config file'
+  varnish_client_port:
+    description: 'port of the client socket'
+    default: 6661
+  varnish_admin_port:
+    description: 'port of the admin socket'
+    default: 6662

@@ -1,0 +1,4 @@
+---
+name: varnish
+files:
+- varnish/varnish-4.1.0.tar.gz

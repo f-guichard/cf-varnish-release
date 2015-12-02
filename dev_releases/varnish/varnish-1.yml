@@ -1,0 +1,16 @@
+---
+packages:
+- name: varnish
+  version: 78a68c975fbf8fe2cf3aa9514eddac3635321c30
+  fingerprint: 78a68c975fbf8fe2cf3aa9514eddac3635321c30
+  sha1: 183ef533ed6537972ea9937754fa7594cc781efc
+  dependencies: []
+jobs:
+- name: varnish
+  version: 4a81d12b228ce87a1d267c3accc86468be1a0b55
+  fingerprint: 4a81d12b228ce87a1d267c3accc86468be1a0b55
+  sha1: 7b8a6b35fe93b701b2a044b0d5639996d6c547ae
+commit_hash: '00000000'
+uncommitted_changes: false
+name: varnish
+version: '1'

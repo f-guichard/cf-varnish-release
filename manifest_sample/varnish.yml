@@ -1,0 +1,93 @@
+---
+name: varnish
+
+director_uuid: dde47ef7-39da-434a-82e1-45379d01e450
+
+releases:
+ - name: varnish
+   version: latest
+
+
+compilation:
+  workers: 1
+  network: default
+  reuse_compilation_vms: true
+  cloud_properties:
+    compute_offering: "CO1 - Small STD"
+    ephemeral_disk_offering: "Small"
+
+
+update:
+  canaries: 0
+  canary_watch_time: 30000-240000
+  update_watch_time:  30000-240000
+  max_in_flight: 32
+  serial: false
+
+
+networks:
+  - name: default
+    type: manual
+    subnets:
+      - range: 10.234.228.128/26
+        gateway: 10.234.228.129
+        reserved:
+        - 10.234.228.130 - 10.234.228.178
+        - 10.234.228.181 - 10.234.228.189
+        static:
+          - 10.234.228.179
+        cloud_properties: {name: "3112 - preprod - back"}
+
+
+resource_pools:
+  - name: default
+    network: default
+    stemcell:
+      name: light-bosh-cloudstack-xen-ubuntu-trusty-go_agent-3112
+      version: latest
+    cloud_properties:
+      compute_offering: "CO1 - Small STD"
+      ephemeral_disk_offering: "Small"
+
+
+disk_pools:
+  - name: disk_pool
+    disk_size: 10240
+    cloud_properties:
+      disk_offering : "Medium"
+
+
+jobs:
+  - name: varnish
+    templates:
+      - {release: varnish, name: varnish}
+
+    instances: 1
+    resource_pool: default
+    persistent_disk_pool: disk_pool
+
+    networks:
+      - name: default
+        static_ips:
+          - 10.234.228.179
+    properties:
+      varnish_default_vcl: |
+            vcl 4.0;
+            # Fichier de configuration avec quelques properties a exposer/surcharger dans le manifest
+            backend default {
+                  .host = "127.0.0.1";
+                  .port = "8080";
+            }
+            sub vcl_deliver {
+                  set resp.status = 999;
+                  set resp.http.BOSH_DEFAULT_CONFIG= "TRUE";
+                  set resp.reason = "BOSH cest dur";
+            }
+            sub vcl_backend_error {
+                  synthetic ( " Boostrap Varnish release config : customize to make it real " );
+                  return (deliver);
+            }    
+
+
+properties: {}
+
